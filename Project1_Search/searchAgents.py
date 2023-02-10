@@ -288,7 +288,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        
+
         # initialized checked_corners_list
         self.checked_corners_list = [False,False,False,False] 
 
@@ -298,7 +298,10 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        # return the start state and the list of checked corners 
+        # here list of checked corners is [False,False,False,False] because in initial state we don`t visit any corner
+        return (self.startingPosition, self.checked_corners_list) 
 
     def isGoalState(self, state):
         """
