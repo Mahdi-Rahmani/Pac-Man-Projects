@@ -533,7 +533,55 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    # I use mazeDistance() function for finding the distance between two points. it usess bfs search method 
+    # the goal is eating all food. by this function we can estimate the distance between this position and each food.
+    # so we can say our heuristic must show the longest distance between this position and all food
+
+    heuristic_value = 0
+    for food_pos in foodGrid.asList():
+        pos_food_distance = mazeDistance(position,food_pos,problem.startingGameState)
+        # if the distance between dood and position is greater than heuristic_value
+        # then we should update heuristic_value (heuristic_value contains the longest distance to food)
+        if pos_food_distance > heuristic_value:
+            heuristic_value = pos_food_distance 
+    return heuristic_value
+
+    # in code below there is another implementation
+    """
+    heuristic_value = 0
+    # find the farthest distance by Astar search using mazeDistance() function.
+    for y in range(foodGrid.height):
+        for x in range(foodGrid.width):
+            # first we should check in that coordiate we have food
+            if(foodGrid[x][y] == True):
+                pos_food_distance = mazeDistance(position,(x,y),problem.startingGameState)
+                # if the distance between dood and position is greater than heuristic_value
+                # then we should update heuristic_value (heuristic_value contains the longest distance to food)
+                if pos_food_distance > heuristic_value:
+                    heuristic_value = pos_food_distance
+    return heuristic_value
+    """
+    # method2
+    """
+    heuristic_value = 0
+    dist1, dist2 = [], []
+    food_pos = foodGrid.asList()
+    if len(food_pos) == 0:
+        return 0
+    for food in food_pos:
+        dist1.append(util.manhattanDistance(food, position), food)
+    closest_food = min(dist1)[1]
+    heuristic_value = min(dist1)[0]
+    for food in food_pos:
+        dist2.append(util.manhattanDistance(closest_food, food))
+    heuristic_value += max(dist2)
+    if len(food_pos) > heuristic_value:
+        return len(food_pos)
+    return heuristic_value
+
+    """
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
