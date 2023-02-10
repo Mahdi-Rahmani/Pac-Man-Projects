@@ -298,7 +298,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        
+
         # return the start state and the list of checked corners 
         # here list of checked corners is [False,False,False,False] because in initial state we don`t visit any corner
         return (self.startingPosition, self.checked_corners_list) 
@@ -582,7 +582,6 @@ def foodHeuristic(state, problem):
 
     """
 
-
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self, state):
@@ -653,7 +652,13 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        goal_pos = self.food.asList()[0]
+        for food_pos in self.food.asList():
+            if util.manhattanDistance(state, food_pos) < util.manhattanDistance(state, goal_pos):
+                goal_pos = food_pos
+        if state == goal_pos:
+            return True
+        return False
 
 def mazeDistance(point1, point2, gameState):
     """
