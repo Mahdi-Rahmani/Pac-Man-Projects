@@ -158,7 +158,37 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # first we should get statrting node
+    start_node = problem.getStartState()
+    # then we should check that if this starting state is goal state then we don`t need any action
+    # (if start_node == goal -> actions_list = [])
+    if problem.isGoalState(start_node):
+        return []
+
+    # for implementing UCS we can use Priority Queue data structure
+    # the Queue elements are in form of ((node, list of actions to cur_node, total cost to cur_node), priority = total cost to cur_node)
+    UCS_priority_queue = util.PriorityQueue()
+
+    # we checked the start node seperately then we add it to UCS_priority_queue 
+    UCS_priority_queue.push((start_node, [], 0), 0)
+    # we can hold the checked nodes in a list
+    checked_nodes = []
+
+    while not UCS_priority_queue.isEmpty():
+
+        cur_node, actions_list, prev_cost = UCS_priority_queue.pop()
+        # we should check if the cur_node isn`t check later then we add it to checked_nodes and check it
+        if cur_node not in checked_nodes:
+            checked_nodes.append(cur_node)
+
+            if problem.isGoalState(cur_node):
+                return actions_list
+
+            for next_node, next_action, cost in problem.getSuccessors(cur_node):
+                new_cost = prev_cost + cost
+                new_action = actions_list + [next_action]
+                UCS_priority_queue.push((next_node, new_action, new_cost),new_cost)
+    
 
 def nullHeuristic(state, problem=None):
     """
