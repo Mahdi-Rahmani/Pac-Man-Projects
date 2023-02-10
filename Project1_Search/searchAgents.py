@@ -288,6 +288,9 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        
+        # initialized checked_corners_list
+        self.checked_corners_list = [False,False,False,False] 
 
     def getStartState(self):
         """
