@@ -393,7 +393,53 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # I intialize the heuristic value with 0
+    heuristic_value = 0
+    # hold current position and checked coners list in seperate variables
+    cur_position = state[0][:]
+    checked_corners = state[1][:]
+    # if we are at goal state then we should return 0 and we dont need to cintinue
+    if checked_corners == [True,True,True,True]:
+        return heuristic_value 
+    
+    # there remains at most 4 corners unvisited, so we need to go for four times
+    for i in range(4): 
+        corners_distance = [0,0,0,0]
+        # calculate the distance between the current position and each of the corners
+        for i in range(4):
+            corners_distance[i] = util.manhattanDistance(cur_position,corners[i])
+        
+        # first we should initilize min_distance
+        # for doing this we add the first unvisited corner distance to min_distance variable
+        # also if there isn`t any distace less than this we can say this index is closest_corner_index
+        min_distance = 0
+        closest_corner_index = 0
+        for i in range(4):
+            if not checked_corners[i]:
+                min_distance = corners_distance[i]
+                closest_corner_index = i
+                break
+        # we check if any distance is less than min_distance and the corner is unvisited
+        # then we should update min_distance and closest_index_corner
+        corner_index = 0
+        for distance in corners_distance:
+            if(not checked_corners[corner_index]) and (distance < min_distance):
+                min_distance = distance
+                closest_corner_index = corner_index
+            corner_index+=1
+        # if this closest_corner that we find isn't unvisited 
+        # then we should go to that corner and add the heuristic value to that
+        # also because we go to that corner we should make it True in checked_corners
+        if (not checked_corners[closest_corner_index]):
+            heuristic_value += corners_distance[closest_corner_index]
+            cur_position = corners[closest_corner_index][:]
+            checked_corners[closest_corner_index]=True
+        else:
+            break
+    # after all we should return the total heurist value.
+    # it estimates the value if we want go the all unvisited corners from this position
+    return heuristic_value
+    #return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
