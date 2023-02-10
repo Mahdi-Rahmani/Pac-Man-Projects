@@ -122,7 +122,38 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # first we should get statrting node
+    start_node = problem.getStartState()
+
+    # then we should check that if this starting state is goal state then we don`t need any action
+    # (if start_node == goal -> actions_list = [])
+    if problem.isGoalState(start_node):
+        return []
+
+    # for implementing BFS we can use Queue data structure
+    # the Queue elements are in form of (node, list of actions)
+    BFS_queue = util.Queue()
+
+    # we checked the start node seperately then we add it to BFS_queue 
+    BFS_queue.push((start_node, []))
+    # we can hold the checked nodes in a list
+    checked_nodes = []
+
+    while not BFS_queue.isEmpty():
+
+        cur_node, actions_list = BFS_queue.pop()
+        # we should check if the cur_node isn`t check later then we add it to checked_nodes and check it
+        if cur_node not in checked_nodes:
+            checked_nodes.append(cur_node)
+
+            if problem.isGoalState(cur_node):
+                return actions_list
+
+            for next_node, next_action, cost in problem.getSuccessors(cur_node):
+                new_action = actions_list + [next_action]
+                BFS_queue.push((next_node, new_action))
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
