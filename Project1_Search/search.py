@@ -235,9 +235,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 Astar_priority_queue.push((next_node, new_action, g_n),f_n)
 
 
-
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+
