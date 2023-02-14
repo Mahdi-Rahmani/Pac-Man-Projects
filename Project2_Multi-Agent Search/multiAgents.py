@@ -176,6 +176,24 @@ class MinimaxAgent(MultiAgentSearchAgent):
             value_action = max(value_action, new_value_action, key=lambda x:x[0])
         return value_action[1]
 
+    # according to slides our pseudocode for minimax function:
+    """
+        def value(state):
+            if the state is a terminal state: return the state's utility
+            if the next agent is MAX: return max_value(state)
+            if the next agent is MIN: return min_value(state)
+    """
+    def value(self, gameState, agentIndex, depth):
+        # first step: we check if the state is a terminal state or not
+        if gameState.isWin() or gameState.isLose() or depth == self.depth * gameState.getNumAgents():
+            return self.evaluationFunction(gameState)
+        # second step: if the agentIndex == 0 so next agent is MAX
+        if agentIndex == 0:
+            return self.max_value(gameState, agentIndex, depth)
+        # third step: if the agentIndex>0 so next agent is MIN
+        else:
+            return self.min_value(gameState, agentIndex, depth)
+    
     # according to slides our pseudocode for max_value function:
     """
         def max_value(state):
@@ -197,7 +215,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         for successor in successor_list:
             v = max(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)))
         return v
-        
+
     # according to slides our pseudocode for min_value function:
     """
         def min_value(state):
