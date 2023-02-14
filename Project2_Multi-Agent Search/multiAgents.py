@@ -164,7 +164,17 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        # we want to choose best action
+        # first we should find possible successors for this state of pacman
+        # then we should find best action to best successor for get maximum value
+        # for do this job we need find the value for possible succesors with the help of value function(minimax algorithm)
+        # then we choose maximum value from them and return the action related to that
+        value_action = (-float("inf"), None)
+        for action in gameState.getLegalActions(self.index):
+            new_value_action = ((self.value(gameState.generateSuccessor(self.index, action), 1, 1)), action)
+            value_action = max(value_action, new_value_action, key=lambda x:x[0])
+        return value_action[1]
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
