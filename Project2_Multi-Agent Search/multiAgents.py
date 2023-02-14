@@ -176,6 +176,27 @@ class MinimaxAgent(MultiAgentSearchAgent):
             value_action = max(value_action, new_value_action, key=lambda x:x[0])
         return value_action[1]
 
+    # according to slides our pseudocode for min_value function:
+    """
+        def min_value(state):
+            initialize v = + inf
+            for each succesor of state:
+                v = min(v, value(successor))
+            return v
+    """
+    def min_value(self, gameState, agentIndex, depth):
+        # first step : initialize v = + inf
+        v = float("inf")
+        # second step : find successors list
+        legal_actions = gameState.getLegalActions(agentIndex)
+        successor_list = []
+        for action in legal_actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            successor_list.append(successor)
+        # third step : find minimum value and update v 
+        for successor in successor_list:
+            v = min(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)))
+        return v
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
