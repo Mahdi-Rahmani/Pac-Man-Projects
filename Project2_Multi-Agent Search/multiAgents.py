@@ -281,8 +281,29 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         else:
             return self.min_value(gameState, agentIndex, depth, a, b)
     
+    # according to slides our pseudocode for max_value function:
+    """
+        def max_value(state, a, b):
+            initialize v = - inf
+            for each succesor of state:              
+                v = max(v, value(successor, a, b))
+                if v > b return v
+                a = max(a, v)
+            return v
+    """
     def max_value(self, gameState, agentIndex, depth, a, b):
-        pass
+        # first step : initialize v = - inf
+        v = -float("inf")
+        # second step : find each successor(hear we want prunning so we shouldn't find complete list of successors like q2)
+        legal_actions = gameState.getLegalActions(agentIndex)
+        for action in legal_actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+        # third step : find maximum value and update v 
+            v = max(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1, a, b)))
+            if v > b :
+                return v
+            a = max(a, v)
+        return v
     
     def min_value(self, gameState, agentIndex, depth, a, b):
         pass
