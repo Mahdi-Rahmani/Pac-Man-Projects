@@ -263,8 +263,23 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             a = max(a, value_action[0])
         return value_action[1]
     
+    # according to slides our pseudocode for alpha_beta function:
+    """
+        def value(state, a, b):
+            if the state is a terminal state: return the state's utility
+            if the next agent is MAX: return max_value(state)
+            if the next agent is MIN: return min_value(state)
+    """
     def value(self, gameState, agentIndex, depth, a, b):
-        pass
+        # first step: we check if the state is a terminal state or not
+        if gameState.isWin() or gameState.isLose() or depth == self.depth * gameState.getNumAgents():
+            return self.evaluationFunction(gameState)
+        # second step: if the agentIndex == 0 so next agent is MAX
+        if agentIndex == 0:
+            return self.max_value(gameState, agentIndex, depth, a, b)
+        # third step: if the agentIndex>0 so next agent is MIN
+        else:
+            return self.min_value(gameState, agentIndex, depth, a, b)
     
     def max_value(self, gameState, agentIndex, depth, a, b):
         pass
