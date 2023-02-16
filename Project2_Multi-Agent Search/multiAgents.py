@@ -395,8 +395,29 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             v = max(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)))
         return v
     
+    # according to slides our pseudocode for exp_value function:
+    """
+        def exp_value(state):
+            initialize v = 0
+            for each succesor of state:
+                p = probability(successor)
+                v += p*value(successor)
+            return v
+    """
     def exp_value(self, gameState, agentIndex, depth):
-        pass
+        # first step : initialize v = 0
+        v = 0
+        # second step : find successors list
+        legal_actions = gameState.getLegalActions(agentIndex)
+        successor_list = []
+        for action in legal_actions:
+            successor = gameState.generateSuccessor(agentIndex, action)
+            successor_list.append(successor)
+        # third step : find probability and update v
+        for successor in successor_list:
+            p = 1.0/len(legal_actions)
+            v += p * self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)
+        return v
 
 def betterEvaluationFunction(currentGameState):
     """
