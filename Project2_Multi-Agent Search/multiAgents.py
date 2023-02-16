@@ -72,10 +72,9 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
+        
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
-
+        
         # first we check the ghost scared timer is 0 or not. 
         # if the scared timer is 0 then we calculate our manhattan distance to ghost
         # if the ghost is too close then the evaluation function should return minimum value that possible
@@ -101,6 +100,7 @@ class ReflexAgent(Agent):
         # so we try to increase the score and eat food but if the food closer, we return higher value
         value = (1.0/closest_food_dist) + successorGameState.getScore()
         return value
+
 
 
 def scoreEvaluationFunction(currentGameState):
@@ -164,7 +164,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        
         # we want to choose best action
         # first we should find possible successors for this state of pacman
         # then we should find best action to best successor for get maximum value
@@ -175,7 +174,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             new_value_action = ((self.value(gameState.generateSuccessor(self.index, action), 1, 1)), action)
             value_action = max(value_action, new_value_action, key=lambda x:x[0])
         return value_action[1]
-
+    
     # according to slides our pseudocode for minimax function:
     """
         def value(state):
@@ -193,7 +192,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
         # third step: if the agentIndex>0 so next agent is MIN
         else:
             return self.min_value(gameState, agentIndex, depth)
-    
+
+
     # according to slides our pseudocode for max_value function:
     """
         def max_value(state):
@@ -237,6 +237,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         for successor in successor_list:
             v = min(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)))
         return v
+      
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -280,7 +281,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         # third step: if the agentIndex>0 so next agent is MIN
         else:
             return self.min_value(gameState, agentIndex, depth, a, b)
-    
+
+
     # according to slides our pseudocode for max_value function:
     """
         def max_value(state, a, b):
@@ -304,7 +306,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return v
             a = max(a, v)
         return v
-    
+
     # according to slides our pseudocode for min_value function:
     """
         def min_value(state, a, b):
@@ -329,7 +331,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             b = min(b, v)
         return v
 
-
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
@@ -343,7 +344,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        
         # we want to choose best action
         # first we should find possible successors for this state of pacman
         # then we should find best action to best successor for get maximum value
@@ -373,6 +373,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         else:
             return self.exp_value(gameState, agentIndex, depth)
 
+
     # according to slides our pseudocode for max_value function:
     """
         def max_value(state):
@@ -394,7 +395,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         for successor in successor_list:
             v = max(v, (self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)))
         return v
-    
+
     # according to slides our pseudocode for exp_value function:
     """
         def exp_value(state):
@@ -418,6 +419,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             p = 1.0/len(legal_actions)
             v += p * self.value(successor, (agentIndex+1)%gameState.getNumAgents(), depth+1)
         return v
+
 
 def betterEvaluationFunction(currentGameState):
     """
