@@ -355,15 +355,30 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             value_action = max(value_action, new_value_action, key=lambda x:x[0])
         return value_action[1]
 
+    # according to slides our pseudocode for Expectimax function:
+    """
+        def value(state):
+            if the state is a terminal state: return the state's utility
+            if the next agent is MAX: return max_value(state)
+            if the next agent is EXP: return exp_value(state)
+    """
     def value(self, gameState, agentIndex, depth):
-        pass
+        # first step: we check if the state is a terminal state or not
+        if gameState.isWin() or gameState.isLose() or depth == self.depth * gameState.getNumAgents():
+            return self.evaluationFunction(gameState)
+        # second step: if the agentIndex == 0 so next agent is MAX
+        if agentIndex == 0:
+            return self.max_value(gameState, agentIndex, depth)
+        # third step: if the agentIndex>0 so next agent is MIN
+        else:
+            return self.exp_value(gameState, agentIndex, depth)
 
     def max_value(self, gameState, agentIndex, depth):
         pass
     
     def exp_value(self, gameState, agentIndex, depth):
         pass
-        
+
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
