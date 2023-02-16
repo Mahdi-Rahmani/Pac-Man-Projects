@@ -343,9 +343,27 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        # we want to choose best action
+        # first we should find possible successors for this state of pacman
+        # then we should find best action to best successor for get maximum value
+        # for do this job we need find the value for possible succesors with the help of value function(Expectimax algorithm)
+        # then we choose maximum value from them and return the action related to that
+        value_action = (-float("inf"), None)
+        for action in gameState.getLegalActions(self.index):
+            new_value_action = ((self.value(gameState.generateSuccessor(self.index, action), 1, 1)), action)
+            value_action = max(value_action, new_value_action, key=lambda x:x[0])
+        return value_action[1]
 
+    def value(self, gameState, agentIndex, depth):
+        pass
 
+    def max_value(self, gameState, agentIndex, depth):
+        pass
+    
+    def exp_value(self, gameState, agentIndex, depth):
+        pass
+        
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
