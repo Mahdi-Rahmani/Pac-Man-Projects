@@ -427,7 +427,70 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+      Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
+      evaluation function (question 5).
+      DESCRIPTION: <write something here so we know what you did>
+      In this evaluation function we want to consider : 1) distance to closest ghost
+                                                        2) distance to closest food
+                                                        3) number of remaining capsules
+                                                        4) number of remaining food
+                                                        5) game score
+    
+    """
+    # like question1 we should first find useful information from Gamestate
+    pacman_pos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    ghost_positions = currentGameState.getGhostPositions()
+    # initialize our parameters:
+    #   distance to ghost
+    closest_ghost_distance = 0
+    #   distance to closest food
+    closest_food_distance = float('inf')
+    #   number of remaining capsules
+    remain_capsule_num = 0
+    #   number of remaining food
+    remain_food_num = 0
+    #   game score
+    game_score = 0
+
+    # first we check if we close to a ghost we should return a very low value
+    ghost_distances = []
+    for ghost_pos in ghost_positions:
+        ghost_distance = manhattanDistance(pacman_pos, ghost_pos)
+        ghost_distances.append(ghost_distance)
+        if (ghost_distance == 0 or ghost_distance == 1):
+            return -float('inf')
+    if len(ghost_distances) != 0:
+        closest_ghost_distance = min(ghost_distances)
+
+    # second we want to calculate our distance to closest food
+    for food_pos in newFood.asList():
+        closest_food_distance = min(closest_food_distance, manhattanDistance(pacman_pos, food_pos))
+
+    # third we want to calculate number of remaining capsules
+    # we plus 1 because of avoiding to be 0 and getting divide by zero error
+    remain_capsule_num = len(currentGameState.getCapsules()) + 1
+
+    # fourth we want to calculate number of remaining food
+    # we plus 1 because of avoiding to be 0 and getting divide by zero error
+    remain_food_num = currentGameState.getNumFood() + 1
+    
+    # fifth we want to calculate the score of game in this state
+    game_score = currentGameState.getScore()
+
+    # a vector that contains the parametes:
+    parameters = [closest_ghost_distance, 1.0 / closest_food_distance, 1.0 / remain_capsule_num, 1.0 / remain_food_num, game_score]
+
+    # a vector that contains the weights related to each parameter
+    weights = [1, 1000, 10000, 1000, 100]
+
+    # calculating evaluation value
+    value = 0
+    for parameter, weight in zip(parameters, weights):
+        value += parameter * weight
+
+    return value
 
 
 # Abbreviation
