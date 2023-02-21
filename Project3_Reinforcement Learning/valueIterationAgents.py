@@ -77,7 +77,28 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # our formula for calculating Q value is :
+                #QValue = sigma_s' ( T(s,a,s') [R(s,a,s') + gamma * V(s')])
+        # so first we should find all possible transactions from current state:
+        posssibleTransactions = self.mdp.getTransitionStatesAndProbs(state, action)
+        # initialize QValue to 0
+        QValue = 0
+        # now according to formula we should find T(s,a,s') and R(s,a,s') and V(s')
+        #   state = s
+        #   next_state = s' 
+        #   T = T(s,a,s')
+        #   R = R(s,a,s')
+        #   discount = gamma
+        for next_state, T in posssibleTransactions:
+            # calculate R(s,a,s')
+            R = self.mdp.getReward(state, action, next_state)
+            # calculate V(s')
+            V_next_state = self.getValue(next_state)
+            # find gamma value (discount factor)
+            discount = self.discount
+            # finally calculate QValue according to formula
+            QValue += T * (R + discount * V_next_state)
+        return QValue
 
     def computeActionFromValues(self, state):
         """
