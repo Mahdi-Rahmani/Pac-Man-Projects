@@ -110,7 +110,28 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # according to above explanation we should check if we are in terminal state then return None
+        if self.mdp.isTerminal(state):
+            return None
+        # according to below figure we should calculate QValue for current state and all possible actions(mabe some q aren`t accessible`)
+        # ---------
+        # | \ q1 / |
+        # |q4 \/ q2|
+        # |   /\   |
+        # | / q3 \ |
+        # ----------
+        # then for finding policy or best action we have this formula:
+        #    policy(s) = argmax_a (Qvalue(s,a))
+        # so first we should find all possible actions in current state
+        possible_actions = self.mdp.getPossibleActions(state)
+        # with the help of util.counter we can create a dict of qvalues according to each action
+        QValues = util.Counter()
+        # then we can calculate QValue for each action with computeQValueFromValues() function
+        for action in possible_actions:
+            QValues[action] = self.computeQValueFromValues(state, action)
+
+        policy = QValues.argMax()
+        return policy
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
