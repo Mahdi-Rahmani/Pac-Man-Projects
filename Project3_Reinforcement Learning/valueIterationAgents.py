@@ -62,6 +62,29 @@ class ValueIterationAgent(ValueEstimationAgent):
     def runValueIteration(self):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        # for calculating value iteration we have this formula:
+        #    V_k+1(s) = max_a ( sigma_s'( T(s,a,s')*[R(s,a,s') + gamma*V_k(s')] ) )
+        # also instead of that we can use this formula:
+        #    V_k+1(s) = max_a ( Q(s, a) )
+        # and instead of calculating max on different possible action we can find policy according to current q values at first
+        # then we use this formula:
+        #    V_k+1(s) = Q(s, policy)
+        for k in range(self.iterations):
+            # for each state we find new value with value iteration and store it in new_values
+            new_values = util.Counter()
+            # in each iteration we do this calculations on all states so we need a loop
+            all_states = self.mdp.getStates()
+            for state in all_states:
+                # only for terminal states we dont run value iteration algorithm
+                if not self.mdp.isTerminal(state):
+                    # first) we should find the best action according to current values 
+                    policy = self.computeActionFromValues(state)
+                    # second) from this values we can calculate 
+                    newValue = self.computeQValueFromValues(state, policy)
+                    # third) add this new value for this state to new_values
+                    new_values[state] = newValue
+            # update values of all state after iteration k
+            self.values = new_values
 
 
     def getValue(self, state):
@@ -172,6 +195,32 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        # for calculating value iteration we have this formula:
+        #    V_k+1(s) = max_a ( sigma_s'( T(s,a,s')*[R(s,a,s') + gamma*V_k(s')] ) )
+        # also instead of that we can use this formula:
+        #    V_k+1(s) = max_a ( Q(s, a) )
+        # and instead of calculating max on different possible action we can find policy according to current q values at first
+        # then we use this formula:
+        #    V_k+1(s) = Q(s, policy)
+
+        # first we need the list of all states
+        states = self.mdp.getStates()
+        # then we need a loop in range of given iterations
+        for iteration in range(self.iterations):
+            # in each iteration we just update one state
+            # for example in itertion1 we update state1 and go on
+            # so we need the index of state in states list and then find it
+            state_index = iteration % len(states)
+            purpose_state = states[state_index]
+            # according to problem if the state is terminal we shouldnt update anything in that iteration
+            if self.mdp.isTerminal(purpose_state):
+                continue
+            # first) we should find the best action according to current values for purpose_state
+            policy = self.computeActionFromValues(purpose_state)
+            # second) according to best action(policy) we can find the maximum value
+            value = self.computeQValueFromValues(purpose_state, policy)
+            # then we can update the value of purpose_state in current iteration
+            self.values[purpose_state] = value
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """
@@ -192,4 +241,60 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
 
     def runValueIteration(self):
         "*** YOUR CODE HERE ***"
+        all_states = self.mdp.getStates()
+        # 1) we need to hold predecessors of all states and compute them
+        #    1-1) define predecessors variable with util.counter()
+        self.predecessors = util.Counter()
+        #    1-2) for holding the predecessors we need to set because of avoiding duplicates
+        for state in all_states:
+            if not self.mdp.isTerminal(state):
+                # define set
+                self.predecessors[state] = set()
+        #    1-3) we should calculate and initialize predecessors of each state      
+        for state in all_states:
+            if not self.mdp.isTerminal(state):
+                # calculate predecessors
+                # according to definition of predecessors:
+                #    predecessors of a state s as all states that have a nonzero probability of reaching s by taking some action a
+                allowable_actions = self.mdp.getPossibleActions(state)
+                for action in allowable_actions:
+                    allowable_transitions = self.mdp.getTransitionStatesAndProbs(state, action)
+                    for next_state, T in allowable_transitions:
+                        if not self.mdp.isTerminal(next_state) and T != 0 :
+                            self.predecessors[next_state].add(state)
 
+        # 2) define an empty priority queue for holding priority
+        self.queue = util.PriorityQueue()
+
+        # 3) For each non-terminal state
+        for state in self.mdp.getStates():
+            if not self.mdp.isTerminal(state):
+                # 3-1) calculate priority and store it in variable diff
+                current_value = self.values[state]
+                policy = self.computeActionFromValues(state)
+                maximum_QValue = self.computeQValueFromValues(state, policy)
+                diff = abs(current_value - maximum_QValue)
+                # 3-2) push the state with calculated diff in priority queue
+                self.queue.push(state, -diff)
+
+        # 4) for designated iterations (in self.iterations):
+        for iteration in range(self.iterations):
+            # 4-1) If the priority queue is empty, then terminate.
+            if self.queue.isEmpty():
+                return
+            # 4-2) else pop a state s off the priority queue.
+            s = self.queue.pop()
+            # 4-3) Update the value of s if it is not a terminal state 
+            #      Note: in step3 we push non-terminal states in queue so we dont need check again
+            policy = self.computeActionFromValues(s)
+            self.values[s] = self.computeQValueFromValues(s, policy)
+            # 4-4) For each predecessor p of s, do:
+            for p in self.predecessors[s]:
+                # 4-4-1) calculate the value of variable diff 
+                current_value = self.values[p]
+                policy = self.computeActionFromValues(p)
+                maximum_QValue = self.computeQValueFromValues(p, policy)
+                diff = abs(current_value - maximum_QValue)
+                # 4-4-2) If diff > theta, push p into the priority queue with priority -diff
+                if diff > self.theta:
+                    self.queue.update(p, -diff)
