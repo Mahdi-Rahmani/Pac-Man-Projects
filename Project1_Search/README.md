@@ -1,7 +1,7 @@
 # Search
 <p align="center">
   <a href="https://inst.eecs.berkeley.edu/~cs188/sp20/assets/images/maze.png">
-    <img src="https://inst.eecs.berkeley.edu/~cs188/sp20/assets/images/maze.png" alt="Maze Image" width="300" height="200">
+    <img src="https://inst.eecs.berkeley.edu/~cs188/sp20/assets/images/maze.png" alt="Maze Image" width="400" height="300">
   </a>
 </p>
 
